@@ -12,8 +12,8 @@ var connection = mysql.createConnection({
   database: "employee_trackerDB"
 });
 
-// Pulling in database info to server once it is updated
-function updateServer() {
+// Pulling in database info once it is updated
+function updateDB() {
     connection.query("SELECT * from role", function(error, res) {
       allroles = res.map(role => ({ name: role.title, value: role.id }));
     });
@@ -34,7 +34,7 @@ function updateServer() {
     if (err) throw err;
     console.log("\nThank you for using Employee Tracker!\n");
     startTrackerQuestions();
-    updateServer();
+    updateDB();
   });
 
 //   Prompts user to select which action that want to take and then calls the functions associated with their selection
@@ -126,6 +126,41 @@ function viewRoles() {
 
 // Function used to add an employee to database
 function addEmployee() {
+  updateDB();
+    inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "First_Name",
+        message: "What is the employee's first name?"
+      },
+      {
+        type: "input",
+        name: "Last_Name",
+        message: "What is the employee's last name?"
+      },
+      {
+        name: "role",
+        type: "list",
+        message: "What is the employee's role?",
+        choices: allroles
+      }
+    ])
+    .then(function(answer) {
+      var query = connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.First_Name,
+          last_name: answer.Last_Name,
+          role_id: answer.role
+        },
+        function(err, res) {
+          if (err) throw err;
+          console.table("\nEmployee Added.\n");
+          startTrackerQuestions();
+        }
+      );
+    });
 }
 
 // Function used to add a department to database
