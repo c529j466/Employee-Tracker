@@ -192,6 +192,42 @@ function addDepartment() {
 
 // Function used to add a role to database
 function addRole() {
+    updateDB();
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "new_role",
+        message: "What role would you like to add?"
+      },
+      {
+        type: "input",
+        name: "new_salary",
+        message: "What is the salary of this role?"
+      },
+      {
+        name: "department",
+        type: "list",
+        message: "Which department does this role belong to?",
+        choices: alldepartments
+      }
+    ])
+    .then(function(answer) {
+      var query = connection.query(
+        "INSERT INTO role SET ?",
+        {
+          title: answer.new_role,
+          salary: answer.new_salary,
+          department_id: answer.department
+        },
+        function(err, res) {
+          if (err) throw err;
+          console.table("\nRole added.\n");
+          updateDB();
+          startTrackerQuestions();
+        }
+      );
+    });
 }
 
 // Function used to update an employee's role in the database
