@@ -1,6 +1,6 @@
 // Requiring needed dependencies
 const inquirer = require("inquirer");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const consoleTable = require("console.table");
 
 // Creating connection 
@@ -94,7 +94,14 @@ function updateServer() {
 
 // Function used to view all employees from database
 function viewEmployees() {
-}
+        var query = "SELECT employee.id, first_name AS FirstName, last_name AS LastName, title AS Role, name AS Department, salary as Salary FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id;";
+        connection.query(query, function(err, res) {
+          if (err) throw err;
+          console.table(res);
+          startTrackerQuestions();
+        });
+      }
+
 
 // Function used to view all departments from database
 function viewDepartments() {
