@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
   database: "employee_trackerDB"
 });
 
-// Pulling in database info to server
+// Pulling in database info to server once it is updated
 function updateServer() {
     connection.query("SELECT * from role", function(error, res) {
       allroles = res.map(role => ({ name: role.title, value: role.id }));
@@ -105,10 +105,23 @@ function viewEmployees() {
 
 // Function used to view all departments from database
 function viewDepartments() {
+    var query = "SELECT id, name AS Department FROM department";
+    connection.query(query, function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      startTrackerQuestions();
+    });
 }
 
 // Function used to view all roles from database
 function viewRoles() {
+    var query =
+    "SELECT r.id, title AS Role, salary, name AS Department FROM role r LEFT JOIN department d ON department_id = d.id";
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    startTrackerQuestions();
+  });
 }
 
 // Function used to add an employee to database
