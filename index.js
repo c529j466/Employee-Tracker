@@ -232,4 +232,39 @@ function addRole() {
 
 // Function used to update an employee's role in the database
 function updateEmployeeRole() {
+    updateDB();
+    inquirer
+      .prompt([
+        {
+          name: "employee",
+          type: "list",
+          message: "Who would you like to update?",
+          choices: allemployees
+        },
+        {
+          name: "role",
+          type: "list",
+          message: "What is this employee's new role?",
+          choices: allroles
+        }
+      ])
+      .then(function(answer) {
+        var query = connection.query(
+          "UPDATE employee SET ? WHERE ?",
+          [
+            {
+              role_id: answer.role
+            },
+            {
+              id: answer.employee
+            }
+          ],
+          function(err, res) {
+            if (err) throw err;
+            console.table("\nEmployee role updated.\n");
+            updateDB();
+            startTrackerQuestions();
+          }
+        );
+      });
 }
