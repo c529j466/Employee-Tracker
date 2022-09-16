@@ -165,6 +165,29 @@ function addEmployee() {
 
 // Function used to add a department to database
 function addDepartment() {
+    updateDB();
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "new_department",
+          message: "What department would you like to add?"
+        }
+      ])
+      .then(function(answer) {
+        var query = connection.query(
+          "INSERT INTO department SET ?",
+          {
+            name: answer.new_department
+          },
+          function(err, res) {
+            if (err) throw err;
+            console.table("\nDepartment added.\n");
+            updateDB();
+            startTrackerQuestions();
+          }
+        );
+      });
 }
 
 // Function used to add a role to database
